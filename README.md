@@ -5,7 +5,7 @@ for a begining thi toolbox will help the user to;
 
 -Resize any image in his file and store it in a choosen directory
 
-##The ToolBox will have;
+## The ToolBox will have;
 
 -A Welcome page
 
