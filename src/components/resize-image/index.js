@@ -2,50 +2,15 @@ import React from 'react'
 import './style.css'
 import logo from '../../images/picture.png'
 import { useState } from 'react'
-import styled from 'styled-components'
-
-const Container1 = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #327ded;
-  height: 100vh;
-`
-
-const Container2 = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-`
-
-const Container2label = styled.label`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width; 16rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 1.75rem;
-  padding-bottom: 1.75rem;
-  background-color: rgb(255 255 255);
-  color: rgb(107 114 128);
-  border-radius: 0.5rem;
-  letter-spacing: 0.025em;
-  text-transform: uppercase;
-`
-const Container2span = styled.span`
-  margin-top: 0.5rem;
-  line-height: 1.5;
-`
-const Container3 = styled.div`
-  margin-top: 1.5rem;
-`
-const Container4 = styled.div`
-  margin-top: 1rem;
-`
+import { ipcRenderer } from 'electron'
+import {
+  Container1,
+  Container2,
+  Container2label,
+  Container2span,
+  Container3,
+  Container4
+} from './style.js'
 
 const ResizeImg = () => {
   const [width, setWidth] = useState('')
@@ -54,19 +19,107 @@ const ResizeImg = () => {
   const [filename, setFilename] = useState('')
   const [outputPath, setOutputPath] = useState('')
 
+  const form = document.querySelector('#img-form')
+  const img = document.querySelector('#img')
+  const heightInput = document.querySelector('#height')
+  const widthInput = document.querySelector('#width')
+  const Toastify = window.Toastify
+  const os = window.os
+  const path = window.path
+
+  const alertSuccess = message => {
+    Toastify.toast({
+      text: message,
+      duration: 5000,
+      close: false,
+      style: {
+        background: 'green',
+        color: 'white',
+        textAlign: 'center'
+      }
+    })
+  }
+
+  const alertError = message => {
+    Toastify.toast({
+      text: message,
+      duration: 5000,
+      close: false,
+      style: {
+        background: 'red',
+        color: 'white',
+        textAlign: 'center'
+      }
+    })
+  }
+  // Make sure file is an image
+  const isFileImage = file => {
+    const acceptedImageTypes = ['image/gif', 'image/jpeg', 'image/png']
+    return file && acceptedImageTypes.includes(file['type'])
+  }
+
   const handleFileSelect = event => {
     setSelectedFile(event.target.files[0])
     setFilename(event.target.files[0].name)
-    setHeight(event.target.files[0].height)
-    setWidth(event.target.files[0].width)
+
+    const file = event.target.files[0]
+
+    // Check if file is an image
+    if (!isFileImage(file)) {
+      alertError('Please select an image')
+      return
+    }
+
+    // Add current height and width to form using the URL API
+    const image = new Image()
+    image.src = URL.createObjectURL(file)
+    image.onload = function () {
+      widthInput.value = this.width
+      heightInput.value = this.height
+    }
+
+    // Show form, image name and output path
+    form.style.display = 'block'
+    filename.innerHTML = img.files[0].name
+    outputPath.innerText = path.join(os.homedir(), 'imageresizer')
   }
 
   const handleSubmit = event => {
     event.preventDefault()
-    // Code for image resizing goes here
-    // Set the output path once resizing is done
+    event.preventDefault()
+
+    if (!img.files[0]) {
+      alertError('Please upload an image')
+      return
+    }
+
+    if (widthInput.value === '' || heightInput.value === '') {
+      alertError('Please enter a width and height')
+      return
+    }
+
+    // Electron adds a bunch of extra properties to the file object including the path
+    const imgPath = img.files[0].path
+    const width = widthInput.value
+    const height = heightInput.value
+
+    ipcRenderer.send('image:resize', {
+      imgPath,
+      height,
+      width
+    })
     setOutputPath('/path/to/resized/image')
   }
+
+  // When done, show message
+  ipcRenderer.on('image:done', () =>
+    alertSuccess(`Image resized to ${heightInput.value} x ${widthInput.value}`)
+  )
+
+  // File select listener
+  img.addEventListener('change', handleFileSelect)
+  // Form submit listener
+  form.addEventListener('submit', handleSubmit)
 
   return (
     <Container1>

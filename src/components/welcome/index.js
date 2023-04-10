@@ -32,8 +32,12 @@ function WelcomePage() {
     <Container>
       <img src={logo} width='100' alt='logo' />
       <Title>Welcome to your personal toolbox</Title>
-
-      <Button>Resize Image</Button>
+      <a href='../resize-image/index.js'>
+        <Button>Resize Image</Button>
+      </a>
+      <a href=''>
+        <Button>View Dashboard</Button>
+      </a>
     </Container>
   )
 }
