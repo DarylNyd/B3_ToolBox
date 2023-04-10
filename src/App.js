@@ -8,7 +8,7 @@ import WelcomePage from './components/welcome'
 function App() {
   console.log('electron', window.electron)
 
-  return <WelcomePage />
+  return <ResizeImg />
 }
 
 export default App
