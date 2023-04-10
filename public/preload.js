@@ -2,6 +2,8 @@
 // It has the same sandbox as a Chrome extension.
 const { contextBridge, ipcRenderer } = require('electron')
 const Toastify = require('toastify-js')
+const os = require('os')
+const path = require('path')
 
 // As an example, here we use the exposeInMainWorld API to expose the browsers
 // and node versions to the main window.
@@ -27,6 +29,14 @@ process.once('loaded', () => {
     send: (channel, data) => ipcRenderer.send(channel, data),
     on: (channel, func) =>
       ipcRenderer.on(channel, (event, ...args) => func(...args))
+  })
+
+  contextBridge.exposeInMainWorld('os', {
+    homedir: () => os.homedir()
+  })
+
+  contextBridge.exposeInMainWorld('path', {
+    join: (...args) => path.join(...args)
   })
 
   contextBridge.exposeInMainWorld('Toastify', {

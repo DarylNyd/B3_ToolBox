@@ -2,6 +2,50 @@ import React from 'react'
 import './style.css'
 import logo from '../../images/picture.png'
 import { useState } from 'react'
+import styled from 'styled-components'
+
+const Container1 = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #327ded;
+  height: 100vh;
+`
+
+const Container2 = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+`
+
+const Container2label = styled.label`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width; 16rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 1.75rem;
+  padding-bottom: 1.75rem;
+  background-color: rgb(255 255 255);
+  color: rgb(107 114 128);
+  border-radius: 0.5rem;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+`
+const Container2span = styled.span`
+  margin-top: 0.5rem;
+  line-height: 1.5;
+`
+const Container3 = styled.div`
+  margin-top: 1.5rem;
+`
+const Container4 = styled.div`
+  margin-top: 1rem;
+`
 
 const ResizeImg = () => {
   const [width, setWidth] = useState('')
@@ -13,6 +57,8 @@ const ResizeImg = () => {
   const handleFileSelect = event => {
     setSelectedFile(event.target.files[0])
     setFilename(event.target.files[0].name)
+    setHeight(event.target.files[0].height)
+    setWidth(event.target.files[0].width)
   }
 
   const handleSubmit = event => {
@@ -23,29 +69,26 @@ const ResizeImg = () => {
   }
 
   return (
-    <div className='bg-teal-700 h-screen flex flex-col align-center justify-center'>
-      <div className='flex flex-col w-full items-center justify-center bg-grey-lighter'>
-        <label
-          htmlFor='img'
-          className='w-64 flex flex-col items-center px-4 py-7 bg-white text-gray-500 rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:text-teal-800'
-        >
+    <Container1>
+      <Container2>
+        <Container2label htmlFor='img'>
           <img src={logo} width='32' alt='logo' />
-          <span className='mt-2 leading-normal'>Select an image to resize</span>
+          <Container2span>Select an image to resize</Container2span>
           <input
             id='img'
             type='file'
             className='hidden'
             onChange={handleFileSelect}
           />
-        </label>
-      </div>
+        </Container2label>
+      </Container2>
 
       <form
         id='img-form'
         onSubmit={handleSubmit}
         className={selectedFile ? '' : 'hidden'}
       >
-        <div className='mt-6'>
+        <Container3>
           <label className='mt-1 block text-white text-center w-80 m-auto py-3 shadow-sm border-gray-300 rounded-md'>
             Width
           </label>
@@ -58,9 +101,9 @@ const ResizeImg = () => {
             value={width}
             onChange={event => setWidth(event.target.value)}
           />
-        </div>
+        </Container3>
 
-        <div className='mt-4'>
+        <Container4>
           <label className='mt-1 block text-white text-center w-80 m-auto py-3 shadow-sm border-gray-300 rounded-md'>
             Height
           </label>
@@ -73,16 +116,16 @@ const ResizeImg = () => {
             value={height}
             onChange={event => setHeight(event.target.value)}
           />
-        </div>
+        </Container4>
 
-        <div className='mt-6'>
+        <Container3>
           <button
             type='submit'
             className='w-80 m-auto flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-500 hover:bg-teal-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
           >
             Resize
           </button>
-        </div>
+        </Container3>
       </form>
 
       <p className='text-white text-lg text-center font-mono mt-6'>
@@ -93,7 +136,7 @@ const ResizeImg = () => {
         <strong>Output: </strong>
         <span id='output-path'>{outputPath}</span>
       </p>
-    </div>
+    </Container1>
   )
 }
 
