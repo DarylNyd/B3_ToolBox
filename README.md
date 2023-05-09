@@ -13,3 +13,5 @@ for a begining thi toolbox will help the user to;
 -A design page that show all the differents options of the toolbox
 
 -A page for the first option that is resizing images
+
+Yvan Daryl Ndenga Nemeck
